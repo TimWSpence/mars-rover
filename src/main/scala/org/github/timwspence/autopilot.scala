@@ -5,7 +5,8 @@ import scala.collection.immutable.Queue
 
 object Autopilot:
   /*
-   * The shortest path on a grid with no obstacles is an L
+   * The shortest path on a grid with no obstacles is an L where we move
+   * to the left or right and then up or down
    * */
   class Simple private (private val grid: Grid):
     def shortestPath(start: Position, finish: Position): List[Position] =
@@ -34,7 +35,6 @@ object Autopilot:
     ): Option[List[Position]] =
       val ancestors = bfs(finish, Queue(start), Map.empty)
       ancestors.get(finish).map { _ =>
-        println("got ancestors map")
         @annotation.tailrec
         def reconstructPath(
             current: Position,
