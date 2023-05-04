@@ -23,7 +23,7 @@ class Simulation private (private val grid: Grid):
     })
 
   def run(commands: List[Command]): Rover => Rover =
-    commands.foldLeft(identity[Rover])((f, cmd) => f.andThen(run(cmd)))
+    commands.foldLeft(AndThen(identity[Rover]))((f, cmd) => f.andThen(run(cmd)))
 
 object Simulation:
   def apply(grid: Grid): Simulation = new Simulation(grid)
