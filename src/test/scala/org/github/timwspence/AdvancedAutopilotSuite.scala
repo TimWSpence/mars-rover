@@ -11,7 +11,20 @@ class AdvancedAutopilotSuite extends munit.FunSuite:
     assertEquals(autopilot.shortestPath(Position(2, 2), Position(0, 0)), None)
   }
 
-  test("trivial adjacent") {
+  test("trivial") {
+    val autopilot = Autopilot.Advanced(
+      Grid(5, 5),
+      Set.empty
+    )
+
+    assertEquals(
+      autopilot.shortestPath(Position(2, 2), Position(2, 2)),
+      Some(List(Position(2, 2)))
+    )
+
+  }
+
+  test("adjacent") {
     val autopilot = Autopilot.Advanced(
       Grid(5, 5),
       Set.empty

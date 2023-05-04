@@ -6,7 +6,8 @@ import scala.collection.immutable.Queue
 object Autopilot:
   /*
    * The shortest path on a grid with no obstacles is an L where we move
-   * to the left or right and then up or down
+   * to the left or right and then up or down (or more precisely no path is
+   * shorter than this)
    * */
   class Simple private (private val grid: Grid):
     def shortestPath(start: Position, finish: Position): List[Position] =
@@ -16,7 +17,7 @@ object Autopilot:
           0.to(finish.x - start.x).foreach { i =>
             path += Position(start.x + i, start.y)
           }
-        }
+        } else {}
       } else {}
       path.toList
 
@@ -33,21 +34,24 @@ object Autopilot:
         start: Position,
         finish: Position
     ): Option[List[Position]] =
-      val ancestors = bfs(finish, Queue(start), Map.empty)
-      ancestors.get(finish).map { _ =>
-        @annotation.tailrec
-        def reconstructPath(
-            current: Position,
-            path: List[Position]
-        ): List[Position] =
-          if (current == start) start :: path
-          else {
-            // We know this is present by construction
-            val prev = ancestors(current)
-            reconstructPath(prev, current :: path)
-          }
+      if (start == finish) Some(List(start))
+      else {
+        val ancestors = bfs(finish, Queue(start), Map.empty)
+        ancestors.get(finish).map { _ =>
+          @annotation.tailrec
+          def reconstructPath(
+              current: Position,
+              path: List[Position]
+          ): List[Position] =
+            if (current == start) start :: path
+            else {
+              // We know this is present by construction
+              val prev = ancestors(current)
+              reconstructPath(prev, current :: path)
+            }
 
-        reconstructPath(finish, Nil)
+          reconstructPath(finish, Nil)
+        }
       }
 
     // Breadth-first search for finish position. Records a map of position to
