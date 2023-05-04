@@ -35,6 +35,7 @@ object Autopilot:
         finish: Position
     ): Option[List[Position]] =
       if (start == finish) Some(List(start))
+      else if (mountains.contains(start)) None
       else {
         val ancestors = bfs(finish, Queue(start), Map.empty)
         ancestors.get(finish).map { _ =>

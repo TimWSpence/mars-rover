@@ -36,6 +36,18 @@ class AdvancedAutopilotSuite extends munit.FunSuite:
     )
   }
 
+  test("degenerate - start on mountain") {
+    val autopilot = Autopilot.Advanced(
+      Grid(5, 5),
+      Set(Position(2,2))
+    )
+
+    assertEquals(
+      autopilot.shortestPath(Position(2, 2), Position(2, 3)),
+      None
+    )
+  }
+
   test("maneouver around mountain") {
     val autopilot = Autopilot.Advanced(
       Grid(17, 17),
