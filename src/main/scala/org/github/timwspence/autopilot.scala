@@ -11,15 +11,32 @@ object Autopilot:
    * */
   class Simple private (private val grid: Grid):
     def shortestPath(start: Position, finish: Position): List[Position] =
-      val path = ListBuffer.empty[Position]
-      if (start.x <= finish.x) {
-        if (finish.x - start.x <= start.x + grid.x - finish.x) {
-          0.to(finish.x - start.x).foreach { i =>
-            path += Position(start.x + i, start.y)
-          }
-        } else {}
-      } else {}
-      path.toList
+
+      // Travel left/right in `xInc` increments until we are above/below `finish`
+      // Then travel up/down in `yInc` increments until we reach `finish`
+      def go(xInc: Int, yInc: Int): List[Position] =
+        val path = ListBuffer(start)
+        var x = start.x
+        while (x != finish.x)
+          x = (x + xInc + grid.x) % grid.x
+          path += Position(x, start.y)
+        var y = start.y
+        while (y != finish.y)
+          y = (y + yInc + grid.y) % grid.y
+          path += Position(finish.x, y)
+        path.toList
+
+      val candidates = List(
+        go(1, 1),
+        go(1, -1),
+        go(-1, 1),
+        go(-1, -1)
+      )
+
+      candidates.minBy(_.length)
+
+  object Simple:
+    def apply(grid: Grid): Autopilot.Simple = new Simple(grid)
 
   /** Djikstra on a graph of equal weights degenerates to breadth-first search
     * (BFS)
