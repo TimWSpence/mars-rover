@@ -1,6 +1,9 @@
 package org.github.timwspence
 
-class AdvancedAutopilotSuite extends munit.FunSuite:
+import org.scalacheck.*
+import org.scalacheck.Prop.*
+
+class AdvancedAutopilotSuite extends munit.ScalaCheckSuite:
 
   test("no path") {
     val autopilot = Autopilot.Advanced(
@@ -34,6 +37,31 @@ class AdvancedAutopilotSuite extends munit.FunSuite:
       autopilot.shortestPath(Position(2, 2), Position(2, 3)),
       Some(List(Position(2, 2), Position(2, 3)))
     )
+  }
+
+  property("agrees with Simple autopilot when no mountains") {
+
+    val gen =
+      for
+        x <- Gen.choose(1, 50)
+        y <- Gen.choose(1, 50)
+        x1 <- Gen.choose(0, x - 1)
+        y1 <- Gen.choose(0, y - 1)
+        x2 <- Gen.choose(0, x - 1)
+        y2 <- Gen.choose(0, y - 1)
+      yield (Grid(x, y), Position(x1, y1), Position(x2, y2))
+
+    forAll(gen) { (grid, start, finish) =>
+      val simple = Autopilot.Simple(grid)
+      val advanced = Autopilot.Advanced(grid, Set.empty)
+
+      assertEquals(
+        advanced.shortestPath(start, finish).map(_.length),
+        Some(simple.shortestPath(start, finish).length)
+      )
+
+    }
+
   }
 
   test("degenerate - start on mountain") {
